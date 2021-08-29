@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.20)
+project(Evgenii_Onegin CXX C)
+
+set(CMAKE_C_STANDARD 99)
+SET_SOURCE_FILES_PROPERTIES(main.c PROPERTIES LANGUAGE CXX)
+SET_SOURCE_FILES_PROPERTIES(module.h.c PROPERTIES LANGUAGE CXX)
+SET_SOURCE_FILES_PROPERTIES(str_mbl.c PROPERTIES LANGUAGE CXX)
+SET_SOURCE_FILES_PROPERTIES(str_mbl.h PROPERTIES LANGUAGE CXX)
+
+add_executable(Evgenii_Onegin main.c module.h str_mbl.h str_mbl.c)
