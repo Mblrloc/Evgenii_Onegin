@@ -1,7 +1,14 @@
 #include "module.h"
-// TODO asserts
-// TODO Define Debug 1 -> стандартные функции : мои
-int mbl_put_str(char* str, FILE *fp){
+//#define DEBUG
+
+int mbl_put_str(char *str, FILE *fp){
+    #ifdef DEBUG
+    return puts(str); //TODO
+    #endif
+
+    assert(str != NULL);
+    assert(fp != NULL);
+
     for (; *str; str++){
         putc(*str, fp);
 
@@ -12,6 +19,10 @@ int mbl_put_str(char* str, FILE *fp){
 }
 
 int mbl_len(char *start) {
+    #ifdef DEBUG
+    return strlen(start);
+    #endif
+
     assert(start != NULL);
 
     char *now = start;
@@ -21,7 +32,11 @@ int mbl_len(char *start) {
 
 }
 
-void mbl_cat(char* base, char* addable) {
+char *mbl_cat(char* base, char* addable) {
+    #ifdef DEBUG
+    return strcat(base, addable);
+    #endif
+
     assert(base != NULL);
     assert(addable != NULL);
 
@@ -32,12 +47,18 @@ void mbl_cat(char* base, char* addable) {
         base++;
 
     }
+    return base;
 
 }
 
-void mbl_ncat(char* base, char* addable, int len) {
+char *mbl_ncat(char* base, char* addable, int len) {
+    #ifdef DEBUG
+    return strncat(base, addable, len);
+    #endif
+
     assert(base != NULL);
     assert(addable != NULL);
+    assert(len >= 0);
 
     char *start = addable;
     for(; *base; base++) {}
@@ -47,10 +68,15 @@ void mbl_ncat(char* base, char* addable, int len) {
         base++;
 
     }
+    return base;
 
 }
 
-void mbl_copy(char* from, char* to) {
+char *mbl_copy(char* from, char* to) {
+    #ifdef DEBUG
+    return strcpy(from, to);
+    #endif
+
     assert(from != NULL);
     assert(to != NULL);
 
@@ -59,13 +85,19 @@ void mbl_copy(char* from, char* to) {
         to++;
 
     }
-    *to = *from;
+    *to = '\0';
+    return to;
 
 }
 
-void mbl_ncopy(char* from, char* to, int count) {
+char *mbl_ncopy(char* from, char* to, int count) {
+    #ifdef DEBUG
+    return strncat(from, to, count);
+    #endif
+
     assert(from != NULL);
     assert(to != NULL);
+    assert(count >= 0);
 
     char *start = from;
     for(; *from && ((from - start) < count); from++){
@@ -74,10 +106,14 @@ void mbl_ncopy(char* from, char* to, int count) {
 
     }
     *to = '\0';
+    return to;
 
 }
-// TODO comply with standard functions
-char* mbl_chr_srch(char* str, char what) {
+
+char *mbl_chr_srch(char* str, char what) {
+    #ifdef DEBUG
+    return strchr(str, what);
+    #endif
     assert(what != NULL);
     assert(str != NULL);
 
@@ -88,118 +124,54 @@ char* mbl_chr_srch(char* str, char what) {
 
 }
 
+/*
 int mbl_chr_count(char* str, char what) {
     assert(str != NULL);
 
     int count = 0;
-// TODO 2 вызова функции - в одну переменную
-    for(count = 0; *mbl_chr_srch(str, what); count++){
-        str = mbl_chr_srch(str, what) + 1;
+    char *str_buf = mbl_chr_srch(str, what);
+
+    for(count = 0; *str_buf; count++){
+        str_buf = mbl_chr_srch(str, what);
+        str = str_buf + 1;
 
     }
     return count;
 
 }
+*/
 
-void mbl_fgets(char *str, FILE *fp){
-//TODO Сброс при новой строке и int count
+char *mbl_fgets(char *str, int count, FILE *fp){
+    #ifdef DEBUG
+    return fgets(str, count, fp);
+    #endif
+    assert(str != NULL);
+    assert(fp != NULL);
+    assert(count >= 0);
+
     char ch = getc(fp);
 
-    for(; ch != '\0' && ch != EOF ; str++) {
+    for(int i = 0; ch != '\n' &&ch != '\0' && ch != EOF && i < count; i++) {
         *str = ch;
         ch = getc(fp);
+        str++;
 
     }
+    return str;
+
 }
 
 char *mbl_dup(char *str){
-    char *copy[Standart_array_size] = {};
-//TODO malloc
-    mbl_copy(str, *copy);
-    return *copy;
-
-}
-
-
-/*
-int mbl_str_srch(char* str, int from, char* what) {
-    assert(str != NULL);
+    #ifdef DEBUG
+    return strdup(str);
+    #endif
     assert(str != NULL);
 
-    int tek_pos = from;
-    char buffer[Standart_array_size] = {};
+    char *copy = {};
 
-    while(tek_pos != No_element) {
-        tek_pos = mbl_chr_srch(str, tek_pos, *what);
-        mbl_form_str(str, buffer, tek_pos, mbl_len(what));
+    copy = (char*) malloc(Standart_array_size * sizeof(char));
+    mbl_copy(str, copy);
 
-        if (mbl_eq(what, buffer)){
-            return tek_pos;
-
-        }
-
-    }
-    return No_element;
+    return copy;
 
 }
-*/
-
-/*
-int mbl_str_count(char* str, int from, char* what) {
-    assert(str != NULL);
-    assert(str != NULL);
-
-    int tek_pos = from - 1, count = 0;
-    char buffer[Standart_array_size] = {};
-
-    while(tek_pos != No_element) {
-        tek_pos++;
-        tek_pos = mbl_chr_srch(str, *what);
-        mbl_form_str(str, buffer, tek_pos, mbl_len(what));
-
-        if (mbl_eq(what, buffer)){
-            count++;
-
-        }
-
-    }
-    return count;
-
-}
-*/
-/*
-void mbl_form_str(char* from, char* to, int start, int len) {
-    //assert(start > start + len);
-    assert(from != NULL);
-
-    for (int i = start; (i < start + len) && (*(from + i) != NULL); i++) {
-        *(to + i - start) = *(from + i);
-
-    }
-    mbl_clear_from(to);
-
-}
-
-bool mbl_eq(char* str1, char* str2) {
-
-    assert(str1 != NULL);
-    assert(str2 != NULL);
-
-    int i = 0;
-
-    for (i = 0; (*(str1 + i) != '\0') && (*(str2 + i) != '\0') && (*(str2 + i) == *(str1 + i)) ; i++) {}
-    return (*(str2 + i) == *(str1 + i));
-
-}
-
-void mbl_clear_from(char* str) {
-    *str = '\0';
-
-}
-
-void mbl_clear_input(){
-    scanf("*[^\n]");
-    scanf("%*c");
-
-}
- */
