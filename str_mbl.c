@@ -1,15 +1,17 @@
 #include "module.h"
-//#define DEBUG
 
-int mbl_put_str(char *str, FILE *fp){
-    #ifdef DEBUG
-    return puts(str); //TODO
-    #endif
+extern bool test;
+
+int mbl_put_str(char* str, FILE *fp) {
+    if (test) {
+        return puts(str);
+
+    }
 
     assert(str != NULL);
     assert(fp != NULL);
 
-    for (; *str; str++){
+    for (; *str; str++) {
         putc(*str, fp);
 
     }
@@ -18,31 +20,33 @@ int mbl_put_str(char *str, FILE *fp){
 
 }
 
-int mbl_len(char *start) {
-    #ifdef DEBUG
-    return strlen(start);
-    #endif
+int mbl_len(char* start) {
+    if (test) {
+        return strlen(start);
+
+    }
 
     assert(start != NULL);
 
     char *now = start;
 
-    for(; *now; now++) {}
+    for (; *now; now++) {}
     return(now - start);
 
 }
 
 char *mbl_cat(char* base, char* addable) {
-    #ifdef DEBUG
-    return strcat(base, addable);
-    #endif
+    if (test) {
+        return strcat(base, addable);
+
+    }
 
     assert(base != NULL);
     assert(addable != NULL);
 
-    for(; *base; base++) {}
+    for (; *base; base++) {}
 
-    for(; *addable; addable++) {
+    for (; *addable; addable++) {
         *(base) = *(addable);
         base++;
 
@@ -52,18 +56,19 @@ char *mbl_cat(char* base, char* addable) {
 }
 
 char *mbl_ncat(char* base, char* addable, int len) {
-    #ifdef DEBUG
-    return strncat(base, addable, len);
-    #endif
+    if (test) {
+        return strncat(base, addable, len);
+
+    }
 
     assert(base != NULL);
     assert(addable != NULL);
     assert(len >= 0);
 
     char *start = addable;
-    for(; *base; base++) {}
+    for (; *base; base++) {}
 
-    for(; *addable && (addable - start) < len; addable++) {
+    for (; *addable && (addable - start) < len; addable++) {
         *(base) = *(addable);
         base++;
 
@@ -73,14 +78,14 @@ char *mbl_ncat(char* base, char* addable, int len) {
 }
 
 char *mbl_copy(char* from, char* to) {
-    #ifdef DEBUG
-    return strcpy(from, to);
-    #endif
+    if (test) {
+        return strcpy(from, to);
 
+    }
     assert(from != NULL);
     assert(to != NULL);
 
-    for(; *from; from++){
+    for (; *from; from++) {
         *to = *from;
         to++;
 
@@ -91,16 +96,16 @@ char *mbl_copy(char* from, char* to) {
 }
 
 char *mbl_ncopy(char* from, char* to, int count) {
-    #ifdef DEBUG
-    return strncat(from, to, count);
-    #endif
+    if (test) {
+        return strncat(from, to, count);
 
+    }
     assert(from != NULL);
     assert(to != NULL);
     assert(count >= 0);
 
     char *start = from;
-    for(; *from && ((from - start) < count); from++){
+    for (; *from && ((from - start) < count); from++) {
         *to = *from;
         to++;
 
@@ -111,47 +116,32 @@ char *mbl_ncopy(char* from, char* to, int count) {
 }
 
 char *mbl_chr_srch(char* str, char what) {
-    #ifdef DEBUG
-    return strchr(str, what);
-    #endif
+    if (test){
+        return strchr(str, what);
+
+    }
     assert(what != NULL);
     assert(str != NULL);
 
     char *w = str;
 
-    for(; *w && (*w != what); w++){}
+    for(; *w && (*w != what); w++) {}
     return w;
 
 }
 
-/*
-int mbl_chr_count(char* str, char what) {
-    assert(str != NULL);
-
-    int count = 0;
-    char *str_buf = mbl_chr_srch(str, what);
-
-    for(count = 0; *str_buf; count++){
-        str_buf = mbl_chr_srch(str, what);
-        str = str_buf + 1;
+char *mbl_fgets(char *str, int count, FILE *fp) {
+    if (test) {
+        return fgets(str, count, fp);
 
     }
-    return count;
-
-}
-*/
-
-char *mbl_fgets(char *str, int count, FILE *fp){
-    #ifdef DEBUG
-    return fgets(str, count, fp);
-    #endif
     assert(str != NULL);
     assert(fp != NULL);
     assert(count >= 0);
 
     char ch = getc(fp);
 
-    for(int i = 0; ch != '\n' &&ch != '\0' && ch != EOF && i < count; i++) {
+    for (int i = 0; ch != '\n' &&ch != '\0' && ch != EOF && i < count; i++) {
         *str = ch;
         ch = getc(fp);
         str++;
@@ -161,15 +151,16 @@ char *mbl_fgets(char *str, int count, FILE *fp){
 
 }
 
-char *mbl_dup(char *str){
-    #ifdef DEBUG
-    return strdup(str);
-    #endif
+char *mbl_dup(char *str) {
+    if (test) {
+        return strdup(str);
+
+    }
     assert(str != NULL);
 
     char *copy = {};
 
-    copy = (char*) malloc(Standart_array_size * sizeof(char));
+    copy = (char*)calloc(Standart_array_size, sizeof(char));
     mbl_copy(str, copy);
 
     return copy;
